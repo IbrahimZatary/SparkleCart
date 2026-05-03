@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using SparkeApp.DTOs.Cart;
 using SparkeApp.Services.Interfaces;
 
@@ -68,5 +69,4 @@ public class CartController(ICartService cartService) : ControllerBase
         }
 
     }
-
 }
