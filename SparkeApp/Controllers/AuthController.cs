@@ -44,4 +44,11 @@ public class AuthController(IAuthService authService) : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
+    [HttpGet("test-error")]
+    public IActionResult TestError()
+    {
+        // This will throw an exception
+        throw new Exception("This is a test exception to verify global exception handling works!");
+    }
 }

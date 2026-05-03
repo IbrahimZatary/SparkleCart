@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using SparkeApp.Data;
+using SparkeApp.Middleware;
 using SparkeApp.Services;
 using SparkeApp.Services.Implementations;
 using SparkeApp.Services.Interfaces;
@@ -43,6 +44,7 @@ builder.Services.AddAuthorization();
 
 
 var app = builder.Build();
+//app.UseMiddleware<GlobalExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

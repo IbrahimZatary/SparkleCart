@@ -91,9 +91,29 @@ public class OrderService(AppDbContext context) : IOrderService
         if (!validStatuses.Contains(updateDto.Status))
         {
             throw new ArgumentException($"Invalid status. Allowed values: {string.Join(", ", validStatuses)}");
-        } 
+        }
 
-        throw new NotImplementedException();   
+        order.Status = updateDto.Status;
+
+        await context.SaveChangesAsync();
+
+        return new OrderDto
+        {
+            Id = order.Id,
+            UserId = order.UserId,
+            UserName = order.User?.Name ?? "Unknown User",
+            Status = order.Status,
+            Price = order.Price,
+            Items = order.OrderItems.Select(oi => new OrderItemDto
+            {
+                Id = oi.Id,
+                ProductId = oi.ProductId,
+                ProductName = oi.Product?.Name ?? "Unknown Product",
+                Quantity = oi.Quantity,
+                UnitPrice = oi.Product.Price,
+                Subtotal = (int)(oi.Quantity * oi.Product.Price)
+            }).ToList()
+        };
 
     }
 }
