@@ -14,41 +14,18 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequestDto LoginRequest)
     {
-        try
-        {
+   
             var result = await authService.LoginAsync(LoginRequest);
             return Ok(result);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+      
     }
 
     // Register
     [HttpPost("sign-up")]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDto RegisterRequest)
     {
-        if (!ModelState.IsValid)
-        {
-            return BadRequest(ModelState);
-        }
-
-        try
-        {
-            var result = await authService.RegisterAsync(RegisterRequest);
-            return Ok(result);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
+        var result = await authService.RegisterAsync(RegisterRequest);
+        return Ok(result);
     }
 
-    [HttpGet("test-error")]
-    public IActionResult TestError()
-    {
-        // This will throw an exception
-        throw new Exception("This is a test exception to verify global exception handling works!");
-    }
 }

@@ -19,90 +19,35 @@ namespace SparkeApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto createCategory)
         {
-            try
-            {
-                var result = await CategoryService.CreateCategoryAsync(createCategory);
-                return Ok(result);
-
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            var result = await CategoryService.CreateCategoryAsync(createCategory);
+            return Ok(result);
         }
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
-            try
-            {
-                var result = await CategoryService.GetAllCategoryAsync();
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
+            var result = await CategoryService.GetAllCategoryAsync();
+            return Ok(result);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCreateCategoryDto updateCategory)
         {
-            try
-            {
-                if (id != updateCategory.Id)
-                {
-                    return BadRequest(new { error = "ID in URL does not match ID in request body" });
-                }
-                var result = await CategoryService.UpdateCategoryAsync(updateCategory);
-                return Ok(result);
-            }
 
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { error = ex.Message });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Failed to update category the reason is ", details = ex.Message });
-            }
+            var result = await CategoryService.UpdateCategoryAsync(updateCategory);
+            return Ok(result);
+
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            try
-            {
-                var result = await CategoryService.DeleteCategoryAsync(id);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Failed to delete category the reason is ", details = ex.Message });
-            }
+            var result = await CategoryService.DeleteCategoryAsync(id);
+            return Ok(result);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory(int id)
         {
-            try
-            {
-                var result = await CategoryService.GetCategoryAsync(id);
-                return Ok(result);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(new { error = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Failed to retrieve category the reason is ", details = ex.Message });
-            }
+            var result = await CategoryService.GetCategoryAsync(id);
+            return Ok(result);
         }
     }
 }
