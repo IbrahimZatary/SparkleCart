@@ -44,15 +44,13 @@ namespace SparkeApp.Services.Implementations
         {
             // include the product with its related cart items and order items to get the counts before deletion
             var existingProduct = await context.Products
-                 //.Include(p => p.CartItems)
-                 //.Include(p => p.OrderItems)
+                 .Include(p => p.CartItems)
+                 .Include(p => p.OrderItems)
                  .FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Product not found to deleted ");
-            // TEMP 
-            var cartItemsCount = 0;  // existingProduct.CartItems?.Count ?? 0;
-            var orderItemsCount = 0; // existingProduct.OrderItems?.Count ?? 0;
+          
 
-            //var cartItemsCount = existingProduct.CartItems?.Count ?? 0; RETURN WHEN CREATING THERE TABLES 
-            //var orderItemsCount = existingProduct.OrderItems?.Count ?? 0;
+            var cartItemsCount = existingProduct.CartItems?.Count ?? 0; 
+            var orderItemsCount = existingProduct.OrderItems?.Count ?? 0;
 
             context.Products.Remove(existingProduct);
             await context.SaveChangesAsync();
@@ -108,15 +106,14 @@ namespace SparkeApp.Services.Implementations
 
         }
 
-        // Task<UpdateProductResponse> UpdateProductAsync(CreateUpdateProductDto updateProduct); 
 
         public async Task<UpdateProductResponse> UpdateProductAsync(CreateUpdateProductDto updateProduct , int id)
         {
             // Find the existing product with related data
             var existingProduct = await context.Products
-                //.Include(p => p.Category)
-                //.Include(p => p.CartItems)
-                //.Include(p => p.OrderItems)
+                .Include(p => p.Category)
+                .Include(p => p.CartItems)
+                .Include(p => p.OrderItems)
                 .FirstOrDefaultAsync(p => p.Id == id)
                 ?? throw new Exception($"Product with ID {id} not found");
 

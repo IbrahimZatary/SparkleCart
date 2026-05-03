@@ -13,7 +13,7 @@ namespace SparkeApp.Services.Implementations
         public async Task<CartResponseDto> AddToCartAsync(int userId, AddToCartRequestDto requestDto)
         {
 
-            // check if the cart id entered is available 
+            // check if the cart id entered is available to remove conflic
             var cart = await context.Carts.FirstOrDefaultAsync(c => c.UserId == userId);
             if (cart == null)
                 throw new InvalidOperationException("No cart found for this user. Please register first.");
@@ -24,23 +24,21 @@ namespace SparkeApp.Services.Implementations
             {
                 throw new ArgumentException("Product not found");
             }
-            // quantity check 
+            
             if (product.Quantity < requestDto.Quantity)
             {
                 throw new InvalidOperationException(
                     $"Only {product.Quantity} items available in stock. You requested {requestDto.Quantity}.");
             }
-            // add prop into cart items // add product into cartItems
+            // add props into cart items // add product into cartItems
             var cartItem = new CartItem
             {
                 CartId = cart.Id,
                 ProductId = requestDto.ProductId,
                 Quantity = requestDto.Quantity
             };
-            // save changes 
             context.CartItems.Add(cartItem);
             await context.SaveChangesAsync();
-
 
             return new CartResponseDto
             {
@@ -55,7 +53,6 @@ namespace SparkeApp.Services.Implementations
         public async Task<CartResponseForUserDto> GetCartByUser(int userId)
         {
 
-            // Check the id &cart  is exist
             //  Check if user exists
             var user = await context.Users.FindAsync(userId);
 
@@ -70,9 +67,9 @@ namespace SparkeApp.Services.Implementations
             }
 
             var cart = await context.Carts
-       .Include(c => c.CartItems)
+          .Include(c => c.CartItems)
            .ThenInclude(ci => ci.Product)
-       .FirstOrDefaultAsync(c => c.UserId == userId);
+           .FirstOrDefaultAsync(c => c.UserId == userId);
 
             //  Check if cart has items
             if (cart.CartItems == null || !cart.CartItems.Any())
@@ -102,11 +99,9 @@ namespace SparkeApp.Services.Implementations
                 CartId = cart.Id,
                 UserId = userId,
                 TotalPrice = totalPrice,
-                Items = items,  // ← All products in cart
+                Items = items,  //  all products in cart as list
                 Message = "Cart retrieved successfully"
             };
-
-            // get the cart for specefic user
             // list all products in the cart as list 
         }
 
@@ -148,8 +143,6 @@ namespace SparkeApp.Services.Implementations
             if (cart == null || !cart.CartItems.Any())
                 throw new InvalidOperationException("Cart is empty.  You Cannot checkout. ");
 
-
-
             int totalPrice = (int)cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price);
             var order = new Order
             {
@@ -161,24 +154,21 @@ namespace SparkeApp.Services.Implementations
             context.Orders.Add(order);
             await context.SaveChangesAsync();
 
-
-
             // Prepare list to hold order items
             var orderItems = new List<OrderItem>();
-
 
             foreach (var cartItem in cart.CartItems)
             {
                 // Convert CartItem to OrderItem
                 var orderItem = new OrderItem
                 {
-                    OrderId = order.Id,                    // Link to new order
-                    ProductId = cartItem.ProductId,        // Which product
-                    Quantity = cartItem.Quantity,          // How many
+                    OrderId = order.Id,                    
+                    ProductId = cartItem.ProductId,       
+                    Quantity = cartItem.Quantity,          
                 };
                 orderItems.Add(orderItem);  // Add to list 
 
-                // update  product stock (reduce available quantity)
+                // update  product stock >  reduce available quantity
                 var product = cartItem.Product;
                 product.Quantity -= cartItem.Quantity; context.Products.Update(product);
             }
@@ -189,7 +179,6 @@ namespace SparkeApp.Services.Implementations
             // remove all cartItems
             context.CartItems.RemoveRange(cart.CartItems);
             await context.SaveChangesAsync();
-
 
             return new OrderResponseDto
             {

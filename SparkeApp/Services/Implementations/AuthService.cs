@@ -6,72 +6,68 @@ using SparkeApp.Models;
 using SparkeApp.Services.Interfaces;
 
 
-namespace SparkeApp.Services.Implementations
+namespace SparkeApp.Services.Implementations;
+
+public class AuthService(AppDbContext context, IJwtService jwtService) : IAuthService
 {
-    public class AuthService(AppDbContext context, IJwtService jwtService) : IAuthService
+  
+    public async Task<LoginResponseDto> LoginAsync(LoginRequestDto LoginRequest)
     {
-      
-        public async Task<LoginResponseDto> LoginAsync(LoginRequestDto LoginRequest)
+        // Get user from DB by email
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Email == LoginRequest.Email);
+
+        // Validate user & password
+        if (user == null || !BCrypt.Net.BCrypt.Verify(LoginRequest.Password, user.PasswordHash))
         {
-            // Get user from DB by email
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == LoginRequest.Email);
-
-            // Validate user & password
-            if (user == null || !BCrypt.Net.BCrypt.Verify(LoginRequest.Password, user.PasswordHash))
-            {
-                throw new UnauthorizedAccessException("Invalid email or password.");
-            }
-
-            //  Generate JWT token
-            var token = jwtService.GenerateToken(user);
-
-            return new LoginResponseDto
-            {
-                Email = user.Email,
-                Message = "Login successful",
-                Token = token,
-                ExpiresIn = 3600,      
-                UserId = user.Id        
-            };
+            throw new UnauthorizedAccessException("Invalid email or password.");
         }
 
-        // Register
-        public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto RegisterRequest)
+        //  Generate jwt token
+        var token = jwtService.GenerateToken(user);
+
+        return new LoginResponseDto
         {
-            // Check if user email already exists
-            var existEmail = await context.Users
-                .FirstOrDefaultAsync(u => u.Email == RegisterRequest.Email);
+            Email = user.Email,
+            Message = "Login successful",
+            Token = token,
+            ExpiresIn = 3600,      
+            UserId = user.Id        
+        };
+    }
 
-            if (existEmail != null)
-                throw new ArgumentException("The user already has an account");
+    public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto RegisterRequest)
+    {
+        // Check if user email already exists
+        var existEmail = await context.Users
+            .FirstOrDefaultAsync(u => u.Email == RegisterRequest.Email);
 
-            // Hash the password 
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(RegisterRequest.Password);
-            var NewUser = new User
-            {
-                Name = RegisterRequest.Name,
-                Email = RegisterRequest.Email,
-                PasswordHash = hashedPassword,
-            };
+        if (existEmail != null)
+            throw new ArgumentException("The user already has an account");
 
-            // Add user to database 
-            await context.Users.AddAsync(NewUser);
-            await context.SaveChangesAsync();
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(RegisterRequest.Password);
+        var NewUser = new User
+        {
+            Name = RegisterRequest.Name,
+            Email = RegisterRequest.Email,
+            PasswordHash = hashedPassword,
+        };
 
-            // Create cart for new user
-            var cart = new Cart
-            {
-                UserId = NewUser.Id,
-            };
-            await context.Carts.AddAsync(cart);
-            await context.SaveChangesAsync();
+        await context.Users.AddAsync(NewUser);
+        await context.SaveChangesAsync();
 
-            return new RegisterResponseDto
-            {
-                Name = NewUser.Name,
-                Email = NewUser.Email,
-                Message = $"Welcome {NewUser.Name} to SparkleCart! Your cart is ready."
-            };
-        }
+        // Create cart for new user when register 
+        var cart = new Cart
+        {
+            UserId = NewUser.Id,
+        };
+        await context.Carts.AddAsync(cart);
+        await context.SaveChangesAsync();
+
+        return new RegisterResponseDto
+        {
+            Name = NewUser.Name,
+            Email = NewUser.Email,
+            Message = $"Welcome {NewUser.Name} to SparkleCart! Your cart is ready."
+        };
     }
 }
