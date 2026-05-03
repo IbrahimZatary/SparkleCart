@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SparkeApp.DTOs.Order;
 using SparkeApp.Services.Implementations;
@@ -8,6 +9,7 @@ namespace SparkeApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] 
     public class OrderController(IOrderService orderService) : ControllerBase
     {
 

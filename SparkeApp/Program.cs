@@ -83,24 +83,6 @@ builder.Services.AddSwaggerGen(options =>
         });
 });
 
-
-
-    //options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    //{
-    //    {
-    //        new OpenApiSecurityScheme
-    //        {
-    //            Reference = new OpenApiReference
-    //            {
-    //                Id = "Bearer",
-    //                Type = ReferenceType.SecurityScheme
-    //            }
-    //        },
-    //        Array.Empty<string>()
-    //    }
-    //});
-
-
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

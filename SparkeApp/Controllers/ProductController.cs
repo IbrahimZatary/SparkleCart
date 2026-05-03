@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SparkeApp.DTOs.Product;
 using SparkeApp.Services;
 using SparkeApp.Services.Interfaces;
@@ -24,6 +25,7 @@ namespace SparkeApp.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateProduct([FromBody] CreateUpdateProductDto createProductDto)
         {
             var product = await productService.CreateProductAsync(createProductDto);
@@ -38,6 +40,7 @@ namespace SparkeApp.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var result = await productService.DeleteProductAsync(id);

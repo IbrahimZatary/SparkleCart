@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using SparkeApp.DTOs.Cart;
 using SparkeApp.Services.Interfaces;
@@ -7,6 +8,7 @@ namespace SparkeApp.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize] 
 public class CartController(ICartService cartService) : ControllerBase
 {
     [HttpPost("Add")]
