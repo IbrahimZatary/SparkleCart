@@ -7,7 +7,7 @@ namespace SparkeApp.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public class AuthController(IAuthService authService) : ControllerBase
+public class AuthController(IAuthService authService , IJwtService jwtService) : ControllerBase
 {
 
     // Login

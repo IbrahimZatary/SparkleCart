@@ -8,9 +8,9 @@ using SparkeApp.Services.Interfaces;
 
 namespace SparkeApp.Services.Implementations
 {
-    public class AuthService(AppDbContext context) : IAuthService
+    public class AuthService(AppDbContext context, IJwtService jwtService) : IAuthService
     {
-        // Login - No JWT
+      
         public async Task<LoginResponseDto> LoginAsync(LoginRequestDto LoginRequest)
         {
             // Get user from DB by email
@@ -22,12 +22,16 @@ namespace SparkeApp.Services.Implementations
                 throw new UnauthorizedAccessException("Invalid email or password.");
             }
 
+            //  Generate JWT token
+            var token = jwtService.GenerateToken(user);
+
             return new LoginResponseDto
             {
                 Email = user.Email,
-                Message = "Login successful"
-                // Token removed
-                // ExpiresIn removed
+                Message = "Login successful",
+                Token = token,
+                ExpiresIn = 3600,      
+                UserId = user.Id        
             };
         }
 

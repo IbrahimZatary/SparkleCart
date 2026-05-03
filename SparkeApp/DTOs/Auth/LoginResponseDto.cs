@@ -8,7 +8,8 @@
         public required string Email { get; set; }
         public required string Message { get; set; }
        // For JWT 
-        //public string Token { get; internal set; } = default !;
-        //public int ExpiresIn { get; internal set; }
+        public string Token { get; internal set; } = default !;
+        public int ExpiresIn { get; internal set; }
+        public int UserId { get; internal set; }
     }
 }
