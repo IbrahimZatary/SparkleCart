@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Cors.Infrastructure;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SparkeApp.DTOs.Cart;
-using SparkeApp.Services.Implementations;
 using SparkeApp.Services.Interfaces;
 
 namespace SparkeApp.Controllers;
@@ -57,6 +54,19 @@ public class CartController(ICartService cartService) : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+    [HttpPost("checkout")]
+    public async Task<IActionResult> CheckoutAsync([FromBody] CheckoutRequestDto request)
+    {
+        try
+        {
+            var result = await cartService.CheckoutAsync(request);
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
 
+    }
 
 }
