@@ -38,7 +38,7 @@ public class CartController(ICartService cartService) : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
-    [HttpPut("Update-Quantity")]
+    [HttpPut("quantity")]
     public async Task<IActionResult> UpdateQuantity([FromBody] UpdateQDto updateDto)
     {
     try
@@ -69,4 +69,6 @@ public class CartController(ICartService cartService) : ControllerBase
         }
 
     }
+
+
 }

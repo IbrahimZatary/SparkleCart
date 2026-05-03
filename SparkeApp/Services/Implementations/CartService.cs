@@ -156,7 +156,7 @@ namespace SparkeApp.Services.Implementations
             var order = new Order
             {
                 UserId = request.UserId,     // Which user owns this order
-                Status = "Payment Done",           // Initial status (waiting payment)
+                Status = "Pending",           // Initial status (waiting payment)
                 Price = totalPrice
             };
 
