@@ -14,23 +14,25 @@ namespace SparkeApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class CategoryController(ICategoryService CategoryService) : ControllerBase
     {
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto createCategory)
         {
             var result = await CategoryService.CreateCategoryAsync(createCategory);
             return Ok(result);
         }
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllCategories()
         {
             var result = await CategoryService.GetAllCategoryAsync();
             return Ok(result);
         }
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> UpdateCategory(int id, [FromBody] UpdateCreateCategoryDto updateCategory)
         {
 
@@ -40,12 +42,15 @@ namespace SparkeApp.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
+
         public async Task<IActionResult> DeleteCategory(int id)
         {
             var result = await CategoryService.DeleteCategoryAsync(id);
             return Ok(result);
         }
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetCategory(int id)
         {
             var result = await CategoryService.GetCategoryAsync(id);

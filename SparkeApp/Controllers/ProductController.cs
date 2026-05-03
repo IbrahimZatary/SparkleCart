@@ -11,6 +11,7 @@ namespace SparkeApp.Controllers
     public class ProductController(IProductService productService) : ControllerBase
     {
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await productService.GetAllProductsAsync();
@@ -18,6 +19,7 @@ namespace SparkeApp.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetProductById(int id)
         {
             var product = await productService.GetProductById(id);
@@ -33,6 +35,7 @@ namespace SparkeApp.Controllers
         }
 
         [HttpPut("{id}")]
+        [AllowAnonymous]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] CreateUpdateProductDto updateProductDto)
         {
             var product = await productService.UpdateProductAsync(updateProductDto, id);
