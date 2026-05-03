@@ -59,19 +59,31 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "SparkleCart E-Commerce API",
-        Version = "v1"
+        Title = "ASP.NET Core Web API",
+        Version = "v1",
+        Description = "ASP.NET Core Web API with JWT authentication. " +
+        "Target Framework is .NET 10. " +
+        "Swashbuckle.AspNetCore 10.1.7 is used."
     });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        In = ParameterLocation.Header,
-        Description = "Enter your JWT token. Example: Bearer {token}",
+        Type = SecuritySchemeType.Http,
         Scheme = "Bearer",
         BearerFormat = "JWT",
-        Type = SecuritySchemeType.Http
+        In = ParameterLocation.Header,
+        Description = "Please enter token"
     });
+
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+        });
+});
+
+
 
     //options.AddSecurityRequirement(new OpenApiSecurityRequirement
     //{
@@ -87,7 +99,7 @@ builder.Services.AddSwaggerGen(options =>
     //        Array.Empty<string>()
     //    }
     //});
-});
+
 
 builder.Services.AddAuthorization();
 
