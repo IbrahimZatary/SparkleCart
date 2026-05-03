@@ -8,7 +8,7 @@ public class Order
     [ForeignKey("User")]
     public int UserId { get; set; } // FK to User related
     [Required]
-    public string Status { get; set; }= default!; // e.g., "Pending", "Shipped", "Delivered"
+    public string Status { get; set; }= default!; //  Pending/Or Shipped/Delivered
     [Required]
     public int Price { get; set; }
     // navigations props

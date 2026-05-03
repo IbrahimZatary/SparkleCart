@@ -11,7 +11,7 @@ public class OrderItem
     [ForeignKey("Product")]
     public int ProductId { get; set; } // FK to Product
     [Required]
-    public int  Quantity { get; set; } 
+    public int Quantity { get; set; } = default!;
 
    // navigations props  
   public Order Order { get; set; } = default!;

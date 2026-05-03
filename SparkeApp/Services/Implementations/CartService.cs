@@ -138,8 +138,6 @@ namespace SparkeApp.Services.Implementations
 
         public async Task<OrderResponseDto> CheckoutAsync(CheckoutRequestDto request)
         {
-
-
             //Method that takes checkout info(userId, payment method, address) and returns order details.
             var cart = await context.Carts
                .Include(c => c.CartItems)
@@ -156,7 +154,7 @@ namespace SparkeApp.Services.Implementations
             var order = new Order
             {
                 UserId = request.UserId,     // Which user owns this order
-                Status = "Pending",           // Initial status (waiting payment)
+                Status = "Pending",           
                 Price = totalPrice
             };
 
