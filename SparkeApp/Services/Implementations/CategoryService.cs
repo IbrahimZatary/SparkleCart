@@ -3,6 +3,7 @@ using SparkeApp.Data;
 using SparkeApp.DTOs.Category;
 using SparkeApp.Models;
 using SparkeApp.Services.Interfaces;
+using SparkeApp.Exceptions;
 namespace SparkeApp.Services.Implementations;
 
 public class CategoryService(AppDbContext context) : ICategoryService
@@ -11,12 +12,12 @@ public class CategoryService(AppDbContext context) : ICategoryService
     public async Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto CreateCategory)
     {
         if(string.IsNullOrEmpty(CreateCategory.Name) )
-            throw new ArgumentException("Category Name are required");
+            throw new BadRequestException("Category Name are required");
         
 
         var existingCategory = await context.Categories.FirstOrDefaultAsync(c => c.Name == CreateCategory.Name);
         if (existingCategory != null)
-             throw new ArgumentException("Category with the same name already exists");
+             throw new ConflictException("Category with the same name already exists");
         
 
         var NewCategory = new Category
@@ -55,7 +56,7 @@ public class CategoryService(AppDbContext context) : ICategoryService
 
     public async Task<DeleteCategoryResponseDto> DeleteCategoryAsync(int id)
     {
-        var CurrentCategory = await context.Categories.FindAsync(id) ?? throw new KeyNotFoundException($"Category with ID {id} not found");
+        var CurrentCategory = await context.Categories.FindAsync(id) ?? throw new NotFoundException($"Category with ID {id} not found");
         context.Categories.Remove(CurrentCategory);
 
         await context.SaveChangesAsync();
@@ -67,7 +68,7 @@ public class CategoryService(AppDbContext context) : ICategoryService
     {
         var CurrentCategory= await context.Categories.FindAsync(id);
         return CurrentCategory is null
-            ? throw new KeyNotFoundException($"Category with ID {id} not found")
+            ? throw new NotFoundException($"Category with ID {id} not found")
             : new CategoryDto
         {
             Id = CurrentCategory.Id,
@@ -78,7 +79,7 @@ public class CategoryService(AppDbContext context) : ICategoryService
 
     public async Task<UpdateCreateResponseDto> UpdateCategoryAsync(UpdateCreateCategoryDto UpdateCategory)
     {
-        var exsitingCategory = await context.Categories.FindAsync(UpdateCategory.Id) ?? throw new KeyNotFoundException($"Category with ID {UpdateCategory.Id} not found");
+        var exsitingCategory = await context.Categories.FindAsync(UpdateCategory.Id) ?? throw new NotFoundException($"Category with ID {UpdateCategory.Id} not found");
         string oldName = exsitingCategory.Name;
         exsitingCategory.Name = UpdateCategory.Name;
 

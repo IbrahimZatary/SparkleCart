@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SparkeApp.Data;
 using SparkeApp.DTOs.Auth;
 using SparkeApp.Models;
+using SparkeApp.Exceptions;
 using SparkeApp.Services.Interfaces;
 
 
@@ -15,7 +16,7 @@ public class AuthService(AppDbContext context, IJwtService jwtService) : IAuthSe
         var user = await context.Users.FirstOrDefaultAsync(u => u.Email == LoginRequest.Email);
 
         if (user is null || !BCrypt.Net.BCrypt.Verify(LoginRequest.Password, user.PasswordHash))
-            throw new UnauthorizedAccessException("Invalid email or password.");
+            throw new UnauthorizedException("Invalid email or password.");
         
         var token = jwtService.GenerateToken(user);
         return new LoginResponseDto
@@ -33,7 +34,7 @@ public class AuthService(AppDbContext context, IJwtService jwtService) : IAuthSe
             .FirstOrDefaultAsync(u => u.Email == RegisterRequest.Email);
 
         if (existEmail != null)
-            throw new ArgumentException("The user already has an account");
+            throw new ConflictException("The user already has an account");
 
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(RegisterRequest.Password);
         var NewUser = new User

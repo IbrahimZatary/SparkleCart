@@ -5,6 +5,7 @@ using SparkeApp.DTOs.Cart;
 using SparkeApp.Models;
 using SparkeApp.Enums;
 using SparkeApp.Services.Interfaces;
+using SparkeApp.Exceptions;
 using System.Net;
 
 namespace SparkeApp.Services.Implementations
@@ -14,12 +15,12 @@ namespace SparkeApp.Services.Implementations
         public async Task<CartResponseDto> AddToCartAsync(int userId, AddToCartRequestDto requestDto)
         {
 
-            var cart = await context.Carts.FirstOrDefaultAsync(c => c.UserId == userId) ?? throw new InvalidOperationException("No cart found for this user. Please register first.");
-            var product = await context.Products.FindAsync(requestDto.ProductId) ?? throw new ArgumentException("Product not found");
+            var cart = await context.Carts.FirstOrDefaultAsync(c => c.UserId == userId) ?? throw new NotFoundException("No cart found for this user. Please register first.");
+            var product = await context.Products.FindAsync(requestDto.ProductId) ?? throw new NotFoundException("Product not found");
 
             if (product.Quantity < requestDto.Quantity)
             {
-                throw new InvalidOperationException(
+                throw new ConflictException(
                     $"Only {product.Quantity} items available in stock. You requested {requestDto.Quantity}.");
             }
             var cartItem = new CartItem
@@ -96,10 +97,10 @@ namespace SparkeApp.Services.Implementations
         {
             var cartItem = await context.CartItems
            .Include(ci => ci.Product)
-           .FirstOrDefaultAsync(ci => ci.Id == updateQDto.CartItemId) ?? throw new ArgumentException("Cart item not found");
+           .FirstOrDefaultAsync(ci => ci.Id == updateQDto.CartItemId) ?? throw new NotFoundException("Cart item not found");
 
             if (updateQDto.QuantityRequired > cartItem.Product.Quantity)
-                throw new InvalidOperationException($"Only {cartItem.Product.Quantity} items available , check later for more .");
+                throw new ConflictException($"Only {cartItem.Product.Quantity} items available , check later for more .");
             cartItem.Quantity = updateQDto.QuantityRequired;
 
             await context.SaveChangesAsync();
@@ -120,7 +121,7 @@ namespace SparkeApp.Services.Implementations
                .FirstOrDefaultAsync(c => c.UserId == request.UserId);
 
             if (cart is null || cart.CartItems.Count == 0)
-                throw new InvalidOperationException("Cart is empty.  You Cannot checkout. ");
+                throw new BadRequestException("Cart is empty.  You Cannot checkout. ");
 
             int totalPrice = (int)cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price);
             var order = new Order
