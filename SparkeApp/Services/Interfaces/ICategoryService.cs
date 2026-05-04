@@ -8,8 +8,7 @@ namespace SparkeApp.Services.Interfaces
         Task<IEnumerable<CategoryDto>> GetAllCategoryAsync();
         Task<CategoryDto> GetCategoryAsync(int id);
         Task<CategoryDto> CreateCategoryAsync(CreateCategoryDto CreateCategory);
-
-        Task<UpdateCreateResCat> UpdateCategoryAsync(UpdateCreateCategoryDto  UpdateCategory);
-        Task <DeleteCategoryResponse> DeleteCategoryAsync(int id);
+        Task<UpdateCreateResponseDto> UpdateCategoryAsync(UpdateCreateCategoryDto  UpdateCategory);
+        Task <DeleteCategoryResponseDto> DeleteCategoryAsync(int id);
     }
 }

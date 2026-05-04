@@ -9,26 +9,20 @@ namespace SparkeApp.Services.Implementations;
 
 public class JwtService(IConfiguration configuration)  : IJwtService
 {
-    private readonly IConfiguration _configuration = configuration;
-
+  
     public string GenerateToken(User user)
     {
-        //   (user data to store in token)
-        var claims = new List<Claim>
-        {
-            new Claim("UserId", user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.Name ?? ""),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-        };
 
-        //  secret key from appsettings.json
-        var jwtSettings = _configuration.GetSection("JwtSettings"); 
+            var claims = new List<Claim>
+            {
+          new(ClaimTypes.NameIdentifier, user.Id.ToString())
+            };
+
+        var jwtSettings = configuration.GetSection("JwtSettings"); 
         var secretKey = jwtSettings["Secret"] ?? throw new Exception("JWT Secret not found");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
 
-        // Create token
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),

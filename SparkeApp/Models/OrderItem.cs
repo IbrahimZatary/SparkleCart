@@ -7,13 +7,12 @@ public class OrderItem
     [Key]
     public int Id { get; set; }
     [ForeignKey("Order")]
-    public int OrderId { get; set; } // FK to Order
+    public int OrderId { get; set; } 
     [ForeignKey("Product")]
-    public int ProductId { get; set; } // FK to Product
+    public int ProductId { get; set; } 
     [Required]
     public int Quantity { get; set; } = default!;
 
-   // navigations props  
   public Order Order { get; set; } = default!;
     public Product Product { get; set; } = default!;
 }

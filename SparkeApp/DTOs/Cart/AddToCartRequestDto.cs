@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace SparkeApp.DTOs.Cart
+namespace SparkeApp.DTOs.Cart;
+
+public class AddToCartRequestDto
 {
-    public class AddToCartRequestDto
-    {
-        [Required]
-        public int ProductId { get; set; }
-        [Required]
-        public int Quantity { get; set; }
-    }
+    [Required]
+    public int ProductId { get; set; }
+    [Required]
+    public int Quantity { get; set; }
 }

@@ -1,12 +1,10 @@
 ﻿using SparkeApp.DTOs.Auth;
-namespace SparkeApp.Services.Interfaces 
-{
-    public interface IAuthService
-    {
-        // For sign-up as new user 
-        Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto RegisterRequest);
+namespace SparkeApp.Services.Interfaces;
 
-        // For Login 
-        Task<LoginResponseDto> LoginAsync(LoginRequestDto LoginRequest);
-    }
+public interface IAuthService
+{
+
+    Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto RegisterRequest);
+
+    Task<LoginResponseDto> LoginAsync(LoginRequestDto LoginRequest);
 }

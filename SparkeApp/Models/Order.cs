@@ -1,17 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SparkeApp.Enums;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace SparkeApp.Models;
 
 public class Order
 {
-    public int Id { get; set; } // PK 
+    public int Id { get; set; }  
     [ForeignKey("User")]
-    public int UserId { get; set; } // FK to User related
+    public int UserId { get; set; } 
     [Required]
-    public string Status { get; set; }= default!; //  Pending/Or Shipped/Delivered
+    public OrderStatus Status { get; set; } = OrderStatus.Pending;
     [Required]
     public int Price { get; set; }
-    // navigations props
     public User User { get; set; } = default!;
     public ICollection<OrderItem> OrderItems { get; set; } = [];
 }

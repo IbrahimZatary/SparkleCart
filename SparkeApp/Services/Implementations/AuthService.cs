@@ -10,34 +10,25 @@ namespace SparkeApp.Services.Implementations;
 
 public class AuthService(AppDbContext context, IJwtService jwtService) : IAuthService
 {
-  
     public async Task<LoginResponseDto> LoginAsync(LoginRequestDto LoginRequest)
     {
-        // Get user from DB by email
         var user = await context.Users.FirstOrDefaultAsync(u => u.Email == LoginRequest.Email);
 
-        // Validate user & password
-        if (user == null || !BCrypt.Net.BCrypt.Verify(LoginRequest.Password, user.PasswordHash))
-        {
+        if (user is null || !BCrypt.Net.BCrypt.Verify(LoginRequest.Password, user.PasswordHash))
             throw new UnauthorizedAccessException("Invalid email or password.");
-        }
-
-        //  Generate jwt token
+        
         var token = jwtService.GenerateToken(user);
-
         return new LoginResponseDto
         {
-            Email = user.Email,
-            Message = "Login successful",
-            Token = token,
-            ExpiresIn = 3600,      
-            UserId = user.Id        
+            AccessToken = token,
+            ExpiresIn = 3600,
+            UserId = user.Id,
+            Email = user.Email   
         };
     }
 
     public async Task<RegisterResponseDto> RegisterAsync(RegisterRequestDto RegisterRequest)
     {
-        // Check if user email already exists
         var existEmail = await context.Users
             .FirstOrDefaultAsync(u => u.Email == RegisterRequest.Email);
 
@@ -51,11 +42,9 @@ public class AuthService(AppDbContext context, IJwtService jwtService) : IAuthSe
             Email = RegisterRequest.Email,
             PasswordHash = hashedPassword,
         };
-
         await context.Users.AddAsync(NewUser);
         await context.SaveChangesAsync();
-
-        // Create cart for new user when register 
+ 
         var cart = new Cart
         {
             UserId = NewUser.Id,

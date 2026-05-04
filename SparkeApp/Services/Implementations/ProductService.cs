@@ -2,6 +2,7 @@
 using SparkeApp.Data;
 using SparkeApp.DTOs.Product;
 using SparkeApp.Models;
+using SparkeApp.Exceptions;
 using SparkeApp.Services.Interfaces;
 
 namespace SparkeApp.Services.Implementations
@@ -10,11 +11,7 @@ namespace SparkeApp.Services.Implementations
     {
         public async Task<ProductDto> CreateProductAsync(CreateUpdateProductDto createProduct)
         {
-            // check if category exists
-            var category = await context.Categories.FindAsync(createProduct.CategoryId);
-            if (category == null) 
-                throw new Exception("Category not found , You can't add product here ");
-            //  assing the values to the product model
+            var category = await context.Categories.FindAsync(createProduct.CategoryId) ?? throw new NotFoundException("Category not found , You can't add product here ");
             var productRequest = new Product
             {
                 Name = createProduct.Name,
@@ -23,10 +20,8 @@ namespace SparkeApp.Services.Implementations
                 Quantity = createProduct.Quantity,
                 CategoryId = createProduct.CategoryId
             };
-            // add the product to the database
             context.Products.Add(productRequest);
             await context.SaveChangesAsync();
-            // return the product response
             return new ProductDto
             { 
             Id = productRequest.Id,
@@ -36,19 +31,15 @@ namespace SparkeApp.Services.Implementations
              CategoryName = category.Name ,
              Message = "Product created successfully"
             };
-
-
         }
 
         public async Task<DeleteProductDto> DeleteProductAsync(int id)
         {
-            // include the product with its related cart items and order items to get the counts before deletion
             var existingProduct = await context.Products
                  .Include(p => p.CartItems)
                  .Include(p => p.OrderItems)
-                 .FirstOrDefaultAsync(p => p.Id == id) ?? throw new Exception("Product not found to deleted ");
+                 .FirstOrDefaultAsync(p => p.Id == id) ?? throw new NotFoundException("Product not found to deleted ");
           
-
             var cartItemsCount = existingProduct.CartItems?.Count ?? 0; 
             var orderItemsCount = existingProduct.OrderItems?.Count ?? 0;
 
@@ -58,8 +49,8 @@ namespace SparkeApp.Services.Implementations
             return new DeleteProductDto
             {
                 Id = existingProduct.Id,
-                CartItemsCount = cartItemsCount, //  Tells user how many carts affected
-                OrderItemsCount = orderItemsCount, // Tells user how many orders affected
+                CartItemsCount = cartItemsCount, 
+                OrderItemsCount = orderItemsCount, 
                 ConfirmationMessage = "Product deleted successfully"
             };
 
@@ -67,7 +58,6 @@ namespace SparkeApp.Services.Implementations
 
         public async Task<IEnumerable<GetAllProductResponseDto>> GetAllProductsAsync()
         {
-            // get all products with their categories
         var products = await context.Products
        .Include(p => p.Category)
        .Select(p => new GetAllProductResponseDto
@@ -79,22 +69,17 @@ namespace SparkeApp.Services.Implementations
            CategoryId = p.CategoryId
        })
        .ToListAsync();
-            // return the list of products
             return products;
-
         }
 
         public async Task<GetProductByIdResponseDto> GetProductById(int id)
         {
-            // check if the product exists
-            var ExsistingProduct = await context.Products.FindAsync(id);
-            if (ExsistingProduct == null)
-                throw new Exception("Product not found");
-            // get the category of the product
+            var ExsistingProduct = await context.Products.FindAsync(id) ?? throw new NotFoundException("Product not found");
+
             var category = await context.Categories.FindAsync(ExsistingProduct.CategoryId);
-          if (category == null)
-            throw new Exception("Category not found for specific Id");
-          return  new GetProductByIdResponseDto
+            return category is null
+                ? throw new NotFoundException("Category not found for specific Id")
+                : new GetProductByIdResponseDto
             {
                 Id = ExsistingProduct.Id,
                 Name = ExsistingProduct.Name,
@@ -103,37 +88,30 @@ namespace SparkeApp.Services.Implementations
                 Quantity = ExsistingProduct.Quantity,
                 Message = "Product retrived"
             };
-
         }
 
 
         public async Task<UpdateProductResponse> UpdateProductAsync(CreateUpdateProductDto updateProduct , int id)
         {
-            // Find the existing product with related data
             var existingProduct = await context.Products
                 .Include(p => p.Category)
                 .Include(p => p.CartItems)
                 .Include(p => p.OrderItems)
                 .FirstOrDefaultAsync(p => p.Id == id)
-                ?? throw new Exception($"Product with ID {id} not found");
+                ?? throw new NotFoundException($"Product with ID {id} not found");
 
-            // if the user want to change the category of the product we need to check if the new category exists
-            var category = await context.Categories.FindAsync(updateProduct.CategoryId);
-            if (category == null)
-                throw new Exception($"Category with ID {updateProduct.CategoryId} not found");
+            var category = await context.Categories.FindAsync(updateProduct.CategoryId) ?? throw new NotFoundException($"Category with ID {updateProduct.CategoryId} not found");
 
-            //  Store old values for logging/response to use it as variables in dto 
             var oldName = existingProduct.Name;
             var oldPrice = existingProduct.Price;
             var oldCategoryId = existingProduct.CategoryId;
 
-            //  Update product properties
             existingProduct.Name = updateProduct.Name;
             existingProduct.Price = updateProduct.Price;
             existingProduct.Description = updateProduct.Description;
             existingProduct.Quantity = updateProduct.Quantity;
             existingProduct.CategoryId = updateProduct.CategoryId;
-            //  Save changes to database
+
             context.Products.Update(existingProduct);
             await context.SaveChangesAsync();
 

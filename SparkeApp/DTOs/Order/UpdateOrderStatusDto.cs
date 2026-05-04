@@ -1,13 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SparkeApp.Enums;
+using System.ComponentModel.DataAnnotations;
 
-namespace SparkeApp.DTOs.Order
+namespace SparkeApp.DTOs.Order;
+public class UpdateOrderStatusDto
 {
-    public class UpdateOrderStatusDto
-    {
-        [Required]
-        public int OrderId { get; set; }
+    [Required]
+    public int OrderId { get; set; }
 
-        [Required]
-        public string Status { get; set; } = string.Empty;
-    }
+    [Required]
+    public OrderStatus Status { get; set; }
 }

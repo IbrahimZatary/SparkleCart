@@ -7,7 +7,6 @@ namespace SparkeApp.Models
         public int Id { get; set; }
         [Required]
         public required string Name { get; set; }
-        // navigations props
         public ICollection<Product> Products { get; set; } = [] ;
     }
 }
