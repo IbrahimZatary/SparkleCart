@@ -67,24 +67,24 @@ namespace SparkeApp.Services.Implementations
                 {
                     CartId = cart.Id,
                     UserId = userId,
-                    TotalPrice = 0,
                     Message = "Cart is empty"
                 };
             }
             var items = cart.CartItems.Select(ci => new CartItemResponseDto
             {
+                Id = ci.Id,
                 ProductId = ci.ProductId,
                 ProductName = ci.Product.Name,
                 ProductPrice = ci.Product.Price,
                 Quantity = ci.Quantity,
                 Subtotal = ci.Quantity * ci.Product.Price
             }).ToList();
-
+             
             decimal totalPrice = items.Sum(i => i.Subtotal);
 
             return new CartResponseForUserDto
             {
-                CartId = cart.Id,
+                CartId = cart.Id,   
                 UserId = userId,
                 TotalPrice = totalPrice,
                 Items = items,  
@@ -169,7 +169,7 @@ namespace SparkeApp.Services.Implementations
                     Quantity = oi.Quantity,
                     Subtotal = (int)(oi.Quantity * oi.Product.Price)
                 })],
-                Message = "Order placed successfully! and  Cart has been cleared."
+                Message = "Order Success!."
             };
         }
 

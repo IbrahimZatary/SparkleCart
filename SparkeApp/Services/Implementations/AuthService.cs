@@ -22,7 +22,7 @@ public class AuthService(AppDbContext context, IJwtService jwtService) : IAuthSe
         return new LoginResponseDto
         {
             AccessToken = token,
-            ExpiresIn = 3600,
+            ExpiresIn = 1,
             UserId = user.Id,
             Email = user.Email   
         };

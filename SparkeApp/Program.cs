@@ -26,6 +26,7 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
+ 
 // JWT Authentication Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = Encoding.UTF8.GetBytes(jwtSettings["Secret"] ?? throw new InvalidOperationException("JWT Secret missing"));
@@ -82,9 +83,20 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddAuthorization();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("SparkleAppReact", policy =>
+    {
+        policy.AllowAnyOrigin()
+        //policy.WithOrigins("http://localhost:5176")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 var app = builder.Build();
 app.UseMiddleware<GlobalExceptionMiddleware>();
+
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -93,6 +105,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("SparkleAppReact");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

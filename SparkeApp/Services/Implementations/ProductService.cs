@@ -65,6 +65,7 @@ namespace SparkeApp.Services.Implementations
            Id = p.Id,
            Name = p.Name,
            Quantity = p.Quantity,
+           Price = p.Price,
            CategoryName = p.Category != null ? p.Category.Name : "Unknown" ,
            CategoryId = p.CategoryId
        })
