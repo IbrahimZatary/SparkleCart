@@ -55,32 +55,12 @@ namespace SparkeApp.Services.Implementations
             };
 
         }
-
-        public async Task<IEnumerable<GetAllProductResponseDto>> GetAllProductsAsync()
-        {
-        var products = await context.Products
-       .Include(p => p.Category)
-       .Select(p => new GetAllProductResponseDto
-       {
-           Id = p.Id,
-           Name = p.Name,
-           Quantity = p.Quantity,
-           Price = p.Price,
-           CategoryName = p.Category != null ? p.Category.Name : "Unknown" ,
-           CategoryId = p.CategoryId
-       })
-       .ToListAsync();
-            return products;
-        }
         public async Task<PaginatedResponseDto<GetAllProductResponseDto>> GetProductsPaginatedAsync(int pageNumber, int pageSize)
         {
             var totalCount = await context.Products.CountAsync();
 
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-
-            // Ensure page number is valid as not less than 1, not greater than total pages
             if (pageNumber < 1) pageNumber = 1;
-            // not greater than total pages
             if (pageNumber > totalPages && totalPages > 0) pageNumber = totalPages;
 
             var products = await context.Products

@@ -4,7 +4,6 @@ namespace SparkeApp.Services;
 
 public interface IProductService
 {
-    Task <IEnumerable<GetAllProductResponseDto>> GetAllProductsAsync();
     Task<PaginatedResponseDto<GetAllProductResponseDto>> GetProductsPaginatedAsync(int pageNumber, int pageSize);
     Task<GetProductByIdResponseDto> GetProductById(int id);
     Task<ProductDto> CreateProductAsync(CreateUpdateProductDto createProduct);

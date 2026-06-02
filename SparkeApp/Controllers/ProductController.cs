@@ -11,14 +11,8 @@ namespace SparkeApp.Controllers;
 [ApiController]
 public class ProductController(IProductService productService) : ControllerBase
 {
-    [HttpGet]
-    public async Task<IActionResult> GetAllProducts()
-    {
-        var products = await productService.GetAllProductsAsync();
-        return Ok(products);
-    }
-    // the paginated endpoint  
-    [HttpGet("paginated")] 
+
+    [HttpGet] 
     public async Task<IActionResult> GetProductsPaginated([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
     {
         if (pageSize > 100)
