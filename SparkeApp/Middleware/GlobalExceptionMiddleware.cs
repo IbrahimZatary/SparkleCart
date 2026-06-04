@@ -27,7 +27,7 @@ namespace SparkeApp.Middleware
                 NotFoundException => (HttpStatusCode.NotFound, ex.Message),
                 BadRequestException => (HttpStatusCode.BadRequest, ex.Message),
                 UnauthorizedException => (HttpStatusCode.Unauthorized, ex.Message),
-                ConflictException => (HttpStatusCode.Conflict, ex.Message),
+                ConflictException => (HttpStatusCode.Conflict, ex.Message),// 409
                 _ => (HttpStatusCode.InternalServerError, "An error occurred")
             };
 

@@ -15,7 +15,7 @@ public class JwtService(IConfiguration configuration)  : IJwtService
 
             var claims = new List<Claim>
             {
-          new(ClaimTypes.NameIdentifier, user.Id.ToString())
+          new(ClaimTypes.NameIdentifier, user.Id.ToString()) // return access token as string claim 
             };
 
         var jwtSettings = configuration.GetSection("JwtSettings"); 

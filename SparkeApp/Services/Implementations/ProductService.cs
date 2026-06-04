@@ -60,11 +60,12 @@ namespace SparkeApp.Services.Implementations
             var totalCount = await context.Products.CountAsync();
 
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+            
             if (pageNumber < 1) pageNumber = 1;
-            if (pageNumber > totalPages && totalPages > 0) pageNumber = totalPages;
+            if (pageNumber > totalPages && totalPages > 0) pageNumber = totalPages; //return last page instead of error or empty of bad page number
 
             var products = await context.Products
-                .AsNoTracking()
+                .AsNoTracking() 
                 .Include(p => p.Category)
                 .OrderBy(p => p.Id) 
                 .Skip((pageNumber - 1) * pageSize)
